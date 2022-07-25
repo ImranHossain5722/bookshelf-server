@@ -12,7 +12,7 @@ app.use(json());
 //------------------------------//
 
 app.get("/", (req, res) => {
-  res.send("Welcome to BookShelf server.");
+  res.send("Welcome to BookShelf server development branch.");
 });
 
 app.listen(port, () => {
