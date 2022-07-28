@@ -69,6 +69,11 @@ const bookSchema = new mongoose.Schema({
       message: (props) => `${props.value} is valid a url`,
     },
   },
+  createdAt: {
+    type: Date,
+    immutable: true,
+    default: () => Date.now(),
+  },
 });
 
 module.exports = mongoose.model("Book", bookSchema);

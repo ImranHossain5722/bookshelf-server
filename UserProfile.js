@@ -16,17 +16,27 @@ const userProfileSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  user_phone: {
+    type: Number,
+    required: false,
+    unique: true,
+  },
   user_role: {
     type: String,
     required: true,
   },
   user_photo_url: {
     type: String,
-    required: true,
+    required: false,
     validate: {
       validator: (v) => v.startsWith("http"),
       message: (props) => `${props.value} is valid a url`,
     },
+  },
+  createdAt: {
+    type: Date,
+    immutable: true,
+    default: () => Date.now(),
   },
 });
 

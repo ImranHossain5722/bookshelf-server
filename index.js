@@ -126,13 +126,26 @@ app.post("/add-user", (req, res) => {
     user_name,
     uid,
     user_email,
+    user_phone,
     user_role,
     user_photo_url,
   };
+  console.log("add user api hitted");
   const run = async () => {
     try {
       const userProfile = await UserProfile.create(categoryData);
       res.send(userProfile);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+app.post("/all-user", (req, res) => {
+  const run = async () => {
+    try {
+      const allUsers = await UserProfile.find();
+      res.send(allUsers);
     } catch (e) {
       res.send(e.message);
     }
