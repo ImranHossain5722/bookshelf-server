@@ -121,7 +121,8 @@ app.post("/add-category", (req, res) => {
 });
 
 app.post("/add-user", (req, res) => {
-  const { user_name, uid, user_email, user_role, user_photo_url } = req.body;
+  const { user_name, uid, user_email, user_phone, user_role, user_photo_url } =
+    req.body;
   const categoryData = {
     user_name,
     uid,
