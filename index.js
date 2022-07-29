@@ -156,19 +156,19 @@ app.put("/update-cart", (req, res) => {
   };
   run();
 });
-// app.get("/get-cart-data", (req, res) => {
-//   const { user_id, cart_data } = req.body;
-//   const run = async () => {
-//     try {
-//       const userProfile = await UserProfile.findById(user_id);
-
-//       res.send(userProfile);
-//     } catch (e) {
-//       res.send(e.message);
-//     }
-//   };
-//   run();
-// });
+app.get("/get-cart-data", (req, res) => {
+  const { user_id } = req.query.id;
+  const run = async () => {
+    try {
+      const userProfile = await UserProfile.findById(user_id);
+      const cartData = userProfile.cart_data;
+      res.send(cartData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 app.put("/update-wishlist", (req, res) => {
   const { user_id, wishlist_data } = req.body;
@@ -178,6 +178,20 @@ app.put("/update-wishlist", (req, res) => {
       userProfile.user_wishlist = [...wishlist_data];
       userProfile.save();
       res.send(userProfile);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+app.get("/get-wishlist-data", (req, res) => {
+  const { user_id } = req.query.id;
+  const run = async () => {
+    try {
+      const userProfile = await UserProfile.findById(user_id);
+      const wishlistData = userProfile.wishlist_data;
+      res.send(wishlistData);
     } catch (e) {
       res.send(e.message);
     }
