@@ -211,6 +211,20 @@ app.get("/all-users", (req, res) => {
   run();
 });
 
+app.post("/get-user", (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  const run = async () => {
+    try {
+      const userData = await UserProfile.where("user_email").equals(email);
+      res.send(userData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
 app.get("/all-books", (req, res) => {
   const run = async () => {
     try {
