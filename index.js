@@ -123,7 +123,7 @@ app.post("/add-category", (req, res) => {
 app.post("/add-user", (req, res) => {
   const { user_name, uid, user_email, user_phone, user_role, user_photo_url } =
     req.body;
-  const categoryData = {
+  const userData = {
     user_name,
     uid,
     user_email,
@@ -134,7 +134,7 @@ app.post("/add-user", (req, res) => {
   console.log("add user api hitted");
   const run = async () => {
     try {
-      const userProfile = await UserProfile.create(categoryData);
+      const userProfile = await UserProfile.create(userData);
       res.send(userProfile);
     } catch (e) {
       res.send(e.message);
@@ -142,7 +142,50 @@ app.post("/add-user", (req, res) => {
   };
   run();
 });
-app.post("/all-user", (req, res) => {
+app.put("/update-cart", (req, res) => {
+  const { user_id, cart_data } = req.body;
+  const run = async () => {
+    try {
+      const userProfile = await UserProfile.findById(user_id);
+      userProfile.user_cart = [...cart_data];
+      userProfile.save();
+      res.send(userProfile);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+// app.get("/get-cart-data", (req, res) => {
+//   const { user_id, cart_data } = req.body;
+//   const run = async () => {
+//     try {
+//       const userProfile = await UserProfile.findById(user_id);
+
+//       res.send(userProfile);
+//     } catch (e) {
+//       res.send(e.message);
+//     }
+//   };
+//   run();
+// });
+
+app.put("/update-wishlist", (req, res) => {
+  const { user_id, wishlist_data } = req.body;
+  const run = async () => {
+    try {
+      const userProfile = await UserProfile.create(categoryData);
+      userProfile.user_wishlist = [...wishlist_data];
+      userProfile.save();
+      res.send(userProfile);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+app.get("/all-users", (req, res) => {
   const run = async () => {
     try {
       const allUsers = await UserProfile.find();

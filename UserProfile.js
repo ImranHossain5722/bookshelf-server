@@ -25,6 +25,16 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  user_cart: {
+    type: [mongoose.SchemaTypes.ObjectId],
+    ref: "Book",
+    required: false,
+  },
+  user_wishlist: {
+    type: [mongoose.SchemaTypes.ObjectId],
+    ref: "Book",
+    required: false,
+  },
   user_photo_url: {
     type: String,
     required: false,
