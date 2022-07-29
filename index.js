@@ -29,7 +29,7 @@ const Category = require("./Category");
 //-------------------------------//
 
 app.get("/", (req, res) => {
-  res.send("Welcome to BookShelf server development branch.");
+  res.send("Welcome to BookShelf");
 });
 
 app.post("/add-book", (req, res) => {
