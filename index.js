@@ -160,21 +160,21 @@ app.post("/add-to-cart", (req, res) => {
   };
   run();
 });
-// app.get("/get-cart-data", (req, res) => {
-//   const email = req.query.email;
-//   const run = async () => {
-//     try {
-//       const userProfile = await UserProfile.find({
-//         user_email: email,
-//       });
-//       // userProfile.user_cart;
-//       res.send(userProfile[0].user_cart);
-//     } catch (e) {
-//       res.send(e.message);
-//     }
-//   };
-//   run();
-// });
+
+app.get("/get-cart-data", (req, res) => {
+  const id = req.query.id;
+  const run = async () => {
+    try {
+      const cartData = await UserProfile.findById(id)
+        .select("user_cart")
+        .populate("user_cart.book");
+      res.send(cartData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 // app.put("/add-to-wishlist", (req, res) => {
 //   const { user_id, wishlist_data } = req.body;
@@ -191,19 +191,21 @@ app.post("/add-to-cart", (req, res) => {
 //   run();
 // });
 
-// app.get("/get-wishlist-data", (req, res) => {
-//   const { user_id } = req.query.id;
-//   const run = async () => {
-//     try {
-//       const userProfile = await UserProfile.findById(user_id);
-//       const wishlistData = userProfile.wishlist_data;
-//       res.send(wishlistData);
-//     } catch (e) {
-//       res.send(e.message);
-//     }
-//   };
-//   run();
-// });
+app.get("/get-wishlist-data", (req, res) => {
+  const user_id = req.query.id;
+  const run = async () => {
+    try {
+      const wishlistData = await UserProfile.findById(user_id)
+        .select("user_wishlist")
+        .populate("user_wishlist");
+
+      res.send(wishlistData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 app.get("/all-users", (req, res) => {
   const run = async () => {
@@ -242,6 +244,30 @@ app.get("/all-books", (req, res) => {
   };
   run();
 });
+
+app.get("/books", (req, res) => {
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const run = async () => {
+    try {
+      const result = {};
+
+      result.pages = (await Book.find().countDocuments()) / limit;
+
+      result.books = await Book.find().limit(limit).skip(startIndex).exec();
+      // const cn = await Book.find().countDocuments();
+
+      res.send(result);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 app.get("/get-book", (req, res) => {
   const id = req.query.id;
   console.log(id);

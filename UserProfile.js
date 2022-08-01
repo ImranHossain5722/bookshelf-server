@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
+const cartSchema = new mongoose.Schema({
+  book: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Book",
+    required: false,
+  },
+  qnt: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+});
+
 const userProfileSchema = new mongoose.Schema({
   user_name: {
     type: String,
@@ -25,11 +38,7 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  user_cart: {
-    type: [mongoose.SchemaTypes.ObjectId],
-    ref: "Book",
-    required: false,
-  },
+  user_cart: [cartSchema],
   user_wishlist: {
     type: [mongoose.SchemaTypes.ObjectId],
     ref: "Book",
