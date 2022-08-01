@@ -23,7 +23,7 @@ const userProfileSchema = new mongoose.Schema({
   },
   user_role: {
     type: String,
-    required: true,
+    required: false,
   },
   user_cart: {
     type: [mongoose.SchemaTypes.ObjectId],
