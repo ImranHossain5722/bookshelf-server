@@ -242,6 +242,20 @@ app.get("/all-books", (req, res) => {
   };
   run();
 });
+app.get("/get-book", (req, res) => {
+  const id = req.query.id;
+  console.log(id);
+  const run = async () => {
+    try {
+      const book = await Book.where("_id").equals(id);
+      console.log(book[0]);
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 
 app.listen(port, () => {
   console.log(`BookShelf listening on port ${port}`);
