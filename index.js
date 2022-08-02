@@ -127,25 +127,26 @@ app.post("/add-user", (req, res) => {
     email: user_email,
     photoURL: user_photo_url,
   } = req.body.user;
-  const { role: user_role } = req.body.userRole;
-  console.log(req.body);
+  const user_role = req.body.user.role;
   const userData = {
     user_name,
     uid,
     user_email,
-    // user_role,
+    user_role,
   };
 
-  console.log("add user api hitted", userData);
   const run = async () => {
     try {
       const existUser = await UserProfile.find({ uid });
       if (existUser.length === 0) {
         const userProfile = await UserProfile.create(userData);
+        console.log(userProfile);
         res.send(userProfile);
       } else {
+        res.send(existUser[0]);
       }
     } catch (e) {
+      console.log(e.message);
       res.send(e.message);
     }
   };

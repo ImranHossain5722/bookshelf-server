@@ -34,7 +34,6 @@ const userProfileSchema = new mongoose.Schema({
   user_phone: {
     type: Number,
     required: false,
-    unique: true,
   },
   user_address: String,
   user_role: {
