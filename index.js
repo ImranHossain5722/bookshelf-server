@@ -84,6 +84,17 @@ app.post("/add-author", (req, res) => {
   };
   run();
 });
+app.get("/all-authors", (req, res) => {
+  const run = async () => {
+    try {
+      const author = await Author.find();
+      res.send(author);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 
 app.post("/add-publisher", (req, res) => {
   const { publisher_name, publisher_email, photo_url } = req.body;
@@ -186,20 +197,20 @@ app.get("/get-cart-data", (req, res) => {
   run();
 });
 
-// app.put("/add-to-wishlist", (req, res) => {
-//   const { user_id, wishlist_data } = req.body;
-//   const run = async () => {
-//     try {
-//       const userProfile = await UserProfile.findById(user_id);
-//       userProfile.user_wishlist.push(wishlist_data);
-//       userProfile.save();
-//       res.send(userProfile);
-//     } catch (e) {
-//       res.send(e.message);
-//     }
-//   };
-//   run();
-// });
+app.post("/add-to-wishlist", (req, res) => {
+  const { user_id, wishlist_data } = req.body;
+  const run = async () => {
+    try {
+      const userProfile = await UserProfile.findById(user_id);
+      userProfile.user_wishlist.push(wishlist_data);
+      userProfile.save();
+      res.send(userProfile);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 app.get("/get-wishlist-data", (req, res) => {
   const user_id = req.query.id;
