@@ -9,7 +9,7 @@ const cartSchema = new mongoose.Schema({
   },
   qnt: {
     type: Number,
-    required: true,
+    default: 1,
     min: 1,
   },
 });
@@ -23,17 +23,20 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    immutable: true,
   },
   user_email: {
     type: String,
     required: true,
     unique: true,
+    immutable: true,
   },
   user_phone: {
     type: Number,
     required: false,
     unique: true,
   },
+  user_address: String,
   user_role: {
     type: String,
     required: false,

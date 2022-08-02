@@ -232,6 +232,43 @@ app.post("/get-user", (req, res) => {
   };
   run();
 });
+app.put("/update-user", (req, res) => {
+  const id = req.query.id;
+  const {
+    user_name: name,
+    user_phone: phone,
+    user_address: add,
+    user_photo_url: ph_url,
+  } = req.body;
+
+  const run = async () => {
+    try {
+      const userData = await UserProfile.findById(id);
+      if (name) {
+        userData.user_name = name;
+        await userData.save();
+      }
+      if (phone) {
+        userData.user_phone = phone;
+        await userData.save();
+      }
+      if (add) {
+        userData.user_address = add;
+        await userData.save();
+      }
+      if (ph_url) {
+        userData.user_photo_url = ph_url;
+        await userData.save();
+      }
+
+      const updatedUser = await UserProfile.findById(id);
+      res.send(updatedUser);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 app.get("/all-books", (req, res) => {
   const run = async () => {
