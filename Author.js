@@ -7,7 +7,7 @@ const authorSchema = new mongoose.Schema({
   },
   author_email: {
     type: String,
-    required: true,
+    required: false,
   },
   authors_books: {
     type: [mongoose.SchemaTypes.ObjectId],

@@ -7,7 +7,7 @@ const publisherSchema = new mongoose.Schema({
   },
   publisher_email: {
     type: String,
-    required: true,
+    required: false,
   },
   publisher_books: {
     type: [mongoose.SchemaTypes.ObjectId],

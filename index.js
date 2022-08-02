@@ -121,21 +121,30 @@ app.post("/add-category", (req, res) => {
 });
 
 app.post("/add-user", (req, res) => {
-  const { user_name, uid, user_email, user_phone, user_role, user_photo_url } =
-    req.body;
+  const {
+    displayName: user_name,
+    uid,
+    email: user_email,
+    photoURL: user_photo_url,
+  } = req.body.user;
+  const { role: user_role } = req.body.userRole;
+  console.log(req.body);
   const userData = {
     user_name,
     uid,
     user_email,
-    user_phone,
-    user_role,
-    user_photo_url,
+    // user_role,
   };
-  console.log("add user api hitted");
+
+  console.log("add user api hitted", userData);
   const run = async () => {
     try {
-      const userProfile = await UserProfile.create(userData);
-      res.send(userProfile);
+      const existUser = await UserProfile.find({ uid });
+      if (existUser.length === 0) {
+        const userProfile = await UserProfile.create(userData);
+        res.send(userProfile);
+      } else {
+      }
     } catch (e) {
       res.send(e.message);
     }
