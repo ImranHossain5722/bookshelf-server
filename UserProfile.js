@@ -14,6 +14,14 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
+const wishlistSchema = new mongoose.Schema({
+  book: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Book",
+    required: false,
+  },
+});
+
 const userProfileSchema = new mongoose.Schema({
   user_name: {
     type: String,
@@ -41,13 +49,7 @@ const userProfileSchema = new mongoose.Schema({
     required: false,
   },
   user_cart: [cartSchema],
-  user_wishlist: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "Book",
-      required: false,
-    },
-  ],
+  user_wishlist: [wishlistSchema],
   user_photo_url: {
     type: String,
     required: false,

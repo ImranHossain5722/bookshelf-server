@@ -231,8 +231,8 @@ app.get("/get-wishlist-data", (req, res) => {
     try {
       const wishlistData = await UserProfile.where("_id")
         .equals(user_id)
-
-        .populate("user_wishlist.[]");
+        .select("user_wishlist")
+        .populate("user_wishlist.book");
 
       res.send(wishlistData);
     } catch (e) {
