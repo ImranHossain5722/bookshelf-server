@@ -15,7 +15,7 @@ const bookSchema = new mongoose.Schema({
   },
   book_country: {
     type: String,
-    required: true,
+    required: false,
   },
   book_language: {
     type: String,
@@ -52,7 +52,7 @@ const bookSchema = new mongoose.Schema({
     min: 1,
   },
   book_category: {
-    type: mongoose.SchemaTypes.ObjectId,
+    type: [mongoose.SchemaTypes.ObjectId],
     ref: "Category",
     required: true,
   },

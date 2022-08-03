@@ -39,8 +39,8 @@ app.post("/add-book", (req, res) => {
     book_edition,
     book_country,
     book_language,
-    book_publisher,
     book_author,
+    book_publisher,
     book_pages,
     discount,
     book_price,
@@ -50,6 +50,10 @@ app.post("/add-book", (req, res) => {
   } = req.body;
   const bookData = {
     book_title,
+    book_description,
+    book_edition,
+    book_country,
+    book_language,
     book_author,
     book_price,
     book_qnt,
@@ -294,7 +298,11 @@ app.put("/update-user", (req, res) => {
 app.get("/all-books", (req, res) => {
   const run = async () => {
     try {
-      const books = await Book.find();
+      const books = await Book.find()
+        .populate("book_category.[]")
+        .populate("book_author")
+        .populate("book_publisher");
+
       res.send(books);
     } catch (e) {
       res.send(e.massage);
@@ -331,8 +339,61 @@ app.get("/get-book", (req, res) => {
   console.log(id);
   const run = async () => {
     try {
-      const book = await Book.where("_id").equals(id);
+      const book = await Book.where("_id")
+        .equals(id)
+        .populate("book_category.[]")
+        .populate("book_author")
+        .populate("book_publisher");
       console.log(book[0]);
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/get-book-by-category", (req, res) => {
+  const ct = req.query.ct;
+  const run = async () => {
+    try {
+      const book = await Book.where("book_category")
+        .equals(ct)
+        .populate("book_category.[]")
+        .populate("book_author")
+        .populate("book_publisher");
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+app.get("/get-book-by-author", (req, res) => {
+  const aut = req.query.aut;
+  const run = async () => {
+    try {
+      const book = await Book.where("book_author")
+        .equals(aut)
+        .populate("book_category.[]")
+        .populate("book_author")
+        .populate("book_publisher");
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+app.get("/get-book-by-publisher", (req, res) => {
+  const pub = req.query.pub;
+  const run = async () => {
+    try {
+      const book = await Book.where("book_publisher")
+        .equals(pub)
+        .populate("book_category.[]")
+        .populate("book_author")
+        .populate("book_publisher");
       res.send(book);
     } catch (e) {
       res.send(e.massage);
