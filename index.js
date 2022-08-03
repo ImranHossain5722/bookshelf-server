@@ -25,6 +25,7 @@ const Author = require("./Author");
 const Publisher = require("./Publisher");
 const UserProfile = require("./UserProfile");
 const Category = require("./Category");
+const Order = require("./Order");
 
 //-------------------------------//
 
@@ -463,6 +464,45 @@ app.get("/search", (req, res) => {
         $or: [{ book_title: { $regex: sq, $options: "i" } }],
       });
       res.send(searchResult);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// handle order
+
+app.post("/place-order", (req, res) => {
+  const run = async () => {
+    try {
+      const placedOrder = await Order.create(req.body);
+      res.send(placedOrder);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/get-order-data", (req, res) => {
+  const user_id = req.query.id;
+  const run = async () => {
+    try {
+      const placedOrderData = await Order.where("user_id").equals(user_id);
+      res.send(placedOrderData);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/all-orders", (req, res) => {
+  const run = async () => {
+    try {
+      const allOrders = await Order.find();
+      res.send(allOrders);
     } catch (e) {
       res.send(e.massage);
     }
