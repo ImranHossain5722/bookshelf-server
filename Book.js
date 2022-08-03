@@ -51,11 +51,13 @@ const bookSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
-  book_category: {
-    type: [mongoose.SchemaTypes.ObjectId],
-    ref: "Category",
-    required: true,
-  },
+  book_category: [
+    {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+  ],
   book_reviews: {
     type: [mongoose.SchemaTypes.ObjectId],
     ref: "Review",

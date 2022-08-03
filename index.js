@@ -117,6 +117,17 @@ app.post("/add-publisher", (req, res) => {
   };
   run();
 });
+app.get("/all-publishers", (req, res) => {
+  const run = async () => {
+    try {
+      const publisher = await Publisher.find();
+      res.send(publisher);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 
 app.post("/add-category", (req, res) => {
   const { category_title, category_icon_url } = req.body;
@@ -168,14 +179,12 @@ app.post("/add-user", (req, res) => {
   run();
 });
 app.post("/add-to-cart", (req, res) => {
-  const { user_email, cart_data } = req.body;
+  const { user_id, cart_data } = req.body;
 
   const run = async () => {
     try {
-      const userProfile = await UserProfile.where("user_email").equals(
-        user_email
-      );
-      console.log(userProfile);
+      const userProfile = await UserProfile.where("_id").equals(user_id);
+
       userProfile[0].user_cart.push(cart_data);
       userProfile[0].save();
       res.send(userProfile);
@@ -220,9 +229,10 @@ app.get("/get-wishlist-data", (req, res) => {
   const user_id = req.query.id;
   const run = async () => {
     try {
-      const wishlistData = await UserProfile.findById(user_id)
-        .select("user_wishlist")
-        .populate("user_wishlist");
+      const wishlistData = await UserProfile.where("_id")
+        .equals(user_id)
+
+        .populate("user_wishlist.[]");
 
       res.send(wishlistData);
     } catch (e) {

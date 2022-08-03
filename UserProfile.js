@@ -41,11 +41,13 @@ const userProfileSchema = new mongoose.Schema({
     required: false,
   },
   user_cart: [cartSchema],
-  user_wishlist: {
-    type: [mongoose.SchemaTypes.ObjectId],
-    ref: "Book",
-    required: false,
-  },
+  user_wishlist: [
+    {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Book",
+      required: false,
+    },
+  ],
   user_photo_url: {
     type: String,
     required: false,
