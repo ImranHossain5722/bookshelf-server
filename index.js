@@ -335,8 +335,8 @@ app.get("/books", (req, res) => {
     try {
       const result = {};
 
-      result.pages = (await Book.find().countDocuments()) / limit;
-
+      const pageCount = (await Book.find().countDocuments()) / limit;
+      result.pages = Math.ceil(pageCount);
       result.books = await Book.find().limit(limit).skip(startIndex).exec();
       // const cn = await Book.find().countDocuments();
 
