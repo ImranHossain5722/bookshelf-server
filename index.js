@@ -88,6 +88,7 @@ app.post("/add-author", (req, res) => {
   };
   run();
 });
+
 app.get("/all-authors", (req, res) => {
   const run = async () => {
     try {
@@ -117,6 +118,7 @@ app.post("/add-publisher", (req, res) => {
   };
   run();
 });
+
 app.get("/all-publishers", (req, res) => {
   const run = async () => {
     try {
@@ -153,7 +155,7 @@ app.post("/add-user", (req, res) => {
     email: user_email,
     photoURL: user_photo_url,
   } = req.body.user;
-  const user_role = req.body.user.role;
+  const user_role = "user";
   const userData = {
     user_name,
     uid,
@@ -178,6 +180,7 @@ app.post("/add-user", (req, res) => {
   };
   run();
 });
+
 app.post("/add-to-cart", (req, res) => {
   const { user_id, cart_data } = req.body;
 
@@ -267,6 +270,7 @@ app.post("/get-user", (req, res) => {
   };
   run();
 });
+
 app.put("/update-user", (req, res) => {
   const id = req.query.id;
   const {
@@ -379,6 +383,7 @@ app.get("/get-book-by-category", (req, res) => {
   };
   run();
 });
+
 app.get("/get-book-by-author", (req, res) => {
   const aut = req.query.aut;
   const run = async () => {
@@ -395,6 +400,7 @@ app.get("/get-book-by-author", (req, res) => {
   };
   run();
 });
+
 app.get("/get-book-by-publisher", (req, res) => {
   const pub = req.query.pub;
   const run = async () => {
@@ -423,6 +429,7 @@ app.get("/all-categories", (req, res) => {
   };
   run();
 });
+
 app.get("/all-publishers", (req, res) => {
   const run = async () => {
     try {
@@ -434,11 +441,28 @@ app.get("/all-publishers", (req, res) => {
   };
   run();
 });
+
 app.get("/all-authors", (req, res) => {
   const run = async () => {
     try {
       const allAuthors = await Author.find();
       res.send(allAuthors);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/search", (req, res) => {
+  const sq = req.query.sq;
+  console.log(sq);
+  const run = async () => {
+    try {
+      const searchResult = await Book.find({
+        $or: [{ book_title: { $regex: sq, $options: "i" } }],
+      });
+      res.send(searchResult);
     } catch (e) {
       res.send(e.massage);
     }
