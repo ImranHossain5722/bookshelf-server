@@ -412,6 +412,40 @@ app.get("/get-book-by-publisher", (req, res) => {
   run();
 });
 
+app.get("/all-categories", (req, res) => {
+  const run = async () => {
+    try {
+      const allCategories = await Category.find();
+      res.send(allCategories);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+app.get("/all-publishers", (req, res) => {
+  const run = async () => {
+    try {
+      const allPublishers = await Publisher.find();
+      res.send(allPublishers);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+app.get("/all-authors", (req, res) => {
+  const run = async () => {
+    try {
+      const allAuthors = await Author.find();
+      res.send(allAuthors);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 app.listen(port, () => {
   console.log(`BookShelf listening on port ${port}`);
 });
