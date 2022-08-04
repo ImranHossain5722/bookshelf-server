@@ -343,30 +343,30 @@ app.post("/get-user", (req, res) => {
 
 app.put("/update-user", (req, res) => {
   const id = req.query.id;
-  const {
-    user_name: name,
-    user_phone: phone,
-    user_address: add,
-    user_photo_url: ph_url,
-  } = req.body;
+  const { user_name, user_phone, user_address, user_photo_url, user_birthday } =
+    req.body;
 
   const run = async () => {
     try {
       const userData = await UserProfile.findById(id);
-      if (name) {
-        userData.user_name = name;
+      if (user_name) {
+        userData.user_name = user_name;
         await userData.save();
       }
-      if (phone) {
-        userData.user_phone = phone;
+      if (user_phone) {
+        userData.user_phone = user_phone;
         await userData.save();
       }
-      if (add) {
-        userData.user_address = add;
+      if (user_address) {
+        userData.user_address = user_address;
         await userData.save();
       }
-      if (ph_url) {
-        userData.user_photo_url = ph_url;
+      if (user_photo_url) {
+        userData.user_photo_url = user_photo_url;
+        await userData.save();
+      }
+      if (user_birthday) {
+        userData.user_birthday = user_birthday;
         await userData.save();
       }
 

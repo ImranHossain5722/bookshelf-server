@@ -43,7 +43,12 @@ const userProfileSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
-  user_address: String,
+  user_address: {
+    type: String,
+  },
+  user_birthday: {
+    type: String,
+  },
   user_role: {
     type: String,
     required: false,
