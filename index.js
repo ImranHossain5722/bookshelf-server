@@ -26,6 +26,7 @@ const Publisher = require("./Publisher");
 const UserProfile = require("./UserProfile");
 const Category = require("./Category");
 const Order = require("./Order");
+const Review = require("./Review");
 
 //-------------------------------//
 
@@ -152,6 +153,7 @@ app.post("/add-category", (req, res) => {
   run();
 });
 
+// handle login start
 app.post("/add-user", (req, res) => {
   const {
     displayName: user_name,
@@ -183,6 +185,72 @@ app.post("/add-user", (req, res) => {
   };
   run();
 });
+
+app.post("/login-publisher", (req, res) => {
+  const {
+    displayName: user_name,
+    uid,
+    email: user_email,
+    photoURL: user_photo_url,
+  } = req.body.user;
+  const user_role = "publisher";
+  const userData = {
+    user_name,
+    uid,
+    user_email,
+    user_role,
+  };
+
+  const run = async () => {
+    try {
+      const existUser = await UserProfile.find({ uid });
+      if (existUser.length === 0) {
+        const userProfile = await UserProfile.create(userData);
+
+        res.send(userProfile);
+      } else {
+        res.send(existUser[0]);
+      }
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+app.post("/login-author", (req, res) => {
+  const {
+    displayName: user_name,
+    uid,
+    email: user_email,
+    photoURL: user_photo_url,
+  } = req.body.user;
+  const user_role = "author";
+  const userData = {
+    user_name,
+    uid,
+    user_email,
+    user_role,
+  };
+
+  const run = async () => {
+    try {
+      const existUser = await UserProfile.find({ uid });
+      if (existUser.length === 0) {
+        const userProfile = await UserProfile.create(userData);
+
+        res.send(userProfile);
+      } else {
+        res.send(existUser[0]);
+      }
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+// handle login end
 
 app.post("/add-to-cart", (req, res) => {
   const { user_id, cart_data } = req.body;
@@ -506,6 +574,24 @@ app.get("/all-orders", (req, res) => {
         .populate("user_id")
         .populate("ordered_items.book_id");
       res.send(allOrders);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// review
+app.post("/add-review", (req, res) => {
+  const { user_id, review } = req.body;
+  const reviewData = {
+    user_id,
+    review,
+  };
+  const run = async () => {
+    try {
+      const addedReview = await Review.create(reviewData);
+      res.send(addedReview);
     } catch (e) {
       res.send(e.massage);
     }
