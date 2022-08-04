@@ -489,7 +489,10 @@ app.get("/get-order-data", (req, res) => {
   const user_id = req.query.id;
   const run = async () => {
     try {
-      const placedOrderData = await Order.where("user_id").equals(user_id);
+      const placedOrderData = await Order.where("user_id")
+        .equals(user_id)
+        .populate("user_id")
+        .populate("ordered_items.book_id");
       res.send(placedOrderData);
     } catch (e) {
       res.send(e.massage);
@@ -501,7 +504,9 @@ app.get("/get-order-data", (req, res) => {
 app.get("/all-orders", (req, res) => {
   const run = async () => {
     try {
-      const allOrders = await Order.find();
+      const allOrders = await Order.find()
+        .populate("user_id")
+        .populate("ordered_items.book_id");
       res.send(allOrders);
     } catch (e) {
       res.send(e.massage);
