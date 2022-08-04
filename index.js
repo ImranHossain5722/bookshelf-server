@@ -328,11 +328,11 @@ app.get("/all-users", (req, res) => {
   run();
 });
 
-app.post("/get-user", (req, res) => {
-  const { email } = req.body;
+app.get("/get-user", (req, res) => {
+  const uid = req.query.uid;
   const run = async () => {
     try {
-      const userData = await UserProfile.where("user_email").equals(email);
+      const userData = await UserProfile.where("uid").equals(uid);
       res.send(userData);
     } catch (e) {
       res.send(e.message);
