@@ -186,7 +186,7 @@ app.post("/login-user", (req, res) => {
   run();
 });
 
-app.post("/add-publisher", (req, res) => {
+app.post("/register-publisher", (req, res) => {
   const { user_name, uid, user_email, user_photo_url } = req.body;
   const user_role = "publisher";
   const userData = {
@@ -203,11 +203,13 @@ app.post("/add-publisher", (req, res) => {
         _id: owner_id,
         user_name: publisher_name,
         user_email: publisher_email,
+        user_photo_url: photo_url,
       } = userProfile;
       const publisherData = {
         owner_id,
         publisher_name,
         publisher_email,
+        photo_url,
       };
       await Publisher.create(publisherData);
       res.send(userProfile);
@@ -218,8 +220,8 @@ app.post("/add-publisher", (req, res) => {
   run();
 });
 
-app.post("/add-author", (req, res) => {
-  const { user_name, uid, user_email, user_photo_url } = req.body;
+app.post("/register-author", (req, res) => {
+  const { user_name, uid, user_email, user_photo_url, user_phone } = req.body;
   const user_role = "author";
   const userData = {
     user_name,
@@ -227,6 +229,7 @@ app.post("/add-author", (req, res) => {
     user_email,
     user_photo_url,
     user_role,
+    user_phone,
   };
 
   const run = async () => {
@@ -236,11 +239,13 @@ app.post("/add-author", (req, res) => {
         _id: owner_id,
         user_name: author_name,
         user_email: author_email,
+        user_photo_url: photo_url,
       } = userProfile;
       const authorData = {
         owner_id,
         author_name,
         author_email,
+        photo_url,
       };
       await Author.create(authorData);
       res.send(userProfile);
