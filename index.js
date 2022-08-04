@@ -154,13 +154,13 @@ app.post("/add-category", (req, res) => {
 });
 
 // handle login start
-app.post("/add-user", (req, res) => {
+app.post("/login-user", (req, res) => {
   const {
     displayName: user_name,
     uid,
     email: user_email,
     photoURL: user_photo_url,
-  } = req.body.user;
+  } = req.body;
   const user_role = "user";
   const userData = {
     user_name,
@@ -186,31 +186,31 @@ app.post("/add-user", (req, res) => {
   run();
 });
 
-app.post("/login-publisher", (req, res) => {
-  const {
-    displayName: user_name,
-    uid,
-    email: user_email,
-    photoURL: user_photo_url,
-  } = req.body.user;
+app.post("/add-publisher", (req, res) => {
+  const { user_name, uid, user_email, user_photo_url } = req.body;
   const user_role = "publisher";
   const userData = {
     user_name,
     uid,
     user_email,
+    user_photo_url,
     user_role,
   };
-
   const run = async () => {
     try {
-      const existUser = await UserProfile.find({ uid });
-      if (existUser.length === 0) {
-        const userProfile = await UserProfile.create(userData);
-
-        res.send(userProfile);
-      } else {
-        res.send(existUser[0]);
-      }
+      const userProfile = await UserProfile.create(userData);
+      const {
+        _id: owner_id,
+        user_name: publisher_name,
+        user_email: publisher_email,
+      } = userProfile;
+      const publisherData = {
+        owner_id,
+        publisher_name,
+        publisher_email,
+      };
+      await Publisher.create(publisherData);
+      res.send(userProfile);
     } catch (e) {
       res.send(e.message);
     }
@@ -218,31 +218,32 @@ app.post("/login-publisher", (req, res) => {
   run();
 });
 
-app.post("/login-author", (req, res) => {
-  const {
-    displayName: user_name,
-    uid,
-    email: user_email,
-    photoURL: user_photo_url,
-  } = req.body.user;
+app.post("/add-author", (req, res) => {
+  const { user_name, uid, user_email, user_photo_url } = req.body;
   const user_role = "author";
   const userData = {
     user_name,
     uid,
     user_email,
+    user_photo_url,
     user_role,
   };
 
   const run = async () => {
     try {
-      const existUser = await UserProfile.find({ uid });
-      if (existUser.length === 0) {
-        const userProfile = await UserProfile.create(userData);
-
-        res.send(userProfile);
-      } else {
-        res.send(existUser[0]);
-      }
+      const userProfile = await UserProfile.create(userData);
+      const {
+        _id: owner_id,
+        user_name: author_name,
+        user_email: author_email,
+      } = userProfile;
+      const authorData = {
+        owner_id,
+        author_name,
+        author_email,
+      };
+      await Author.create(authorData);
+      res.send(userProfile);
     } catch (e) {
       res.send(e.message);
     }

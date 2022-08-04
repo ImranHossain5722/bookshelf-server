@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const publisherSchema = new mongoose.Schema({
+  owner_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "UserProfile",
+    required: false,
+  },
   publisher_name: {
     type: String,
     required: true,

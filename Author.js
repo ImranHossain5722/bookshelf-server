@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const authorSchema = new mongoose.Schema({
+  owner_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "UserProfile",
+    required: false,
+  },
   author_name: {
     type: String,
     required: true,
