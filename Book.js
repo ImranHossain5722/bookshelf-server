@@ -15,7 +15,7 @@ const bookSchema = new mongoose.Schema({
   },
   book_country: {
     type: String,
-    required: false,
+    required: true,
   },
   book_language: {
     type: String,
@@ -33,12 +33,12 @@ const bookSchema = new mongoose.Schema({
   },
   book_price: {
     type: Number,
-    required: true,
+    required: false,
     min: 1,
   },
   book_pages: {
     type: Number,
-    required: true,
+    required: false,
     min: 1,
   },
   discount: {
@@ -58,11 +58,13 @@ const bookSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  book_reviews: {
-    type: [mongoose.SchemaTypes.ObjectId],
-    ref: "Review",
-    required: false,
-  },
+  book_reviews: [
+    {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Review",
+      required: false,
+    },
+  ],
   book_cover_photo_url: {
     type: String,
     required: true,

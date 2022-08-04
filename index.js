@@ -47,7 +47,7 @@ app.post("/add-book", (req, res) => {
     book_price,
     book_qnt,
     book_category,
-    cover_photo_url,
+    book_cover_photo_url,
   } = req.body;
   const bookData = {
     book_title,
@@ -56,10 +56,13 @@ app.post("/add-book", (req, res) => {
     book_country,
     book_language,
     book_author,
+    book_publisher,
+    book_pages,
+    discount,
     book_price,
     book_qnt,
     book_category,
-    cover_photo_url,
+    book_cover_photo_url,
   };
   const run = async () => {
     try {
@@ -169,13 +172,12 @@ app.post("/add-user", (req, res) => {
       const existUser = await UserProfile.find({ uid });
       if (existUser.length === 0) {
         const userProfile = await UserProfile.create(userData);
-        console.log(userProfile);
+
         res.send(userProfile);
       } else {
         res.send(existUser[0]);
       }
     } catch (e) {
-      console.log(e.message);
       res.send(e.message);
     }
   };
@@ -260,7 +262,6 @@ app.get("/all-users", (req, res) => {
 
 app.post("/get-user", (req, res) => {
   const { email } = req.body;
-  console.log(email);
   const run = async () => {
     try {
       const userData = await UserProfile.where("user_email").equals(email);
@@ -351,15 +352,13 @@ app.get("/books", (req, res) => {
 
 app.get("/get-book", (req, res) => {
   const id = req.query.id;
-  console.log(id);
   const run = async () => {
     try {
       const book = await Book.where("_id")
         .equals(id)
-        .populate("book_category.[]")
+        .populate("book_category")
         .populate("book_author")
         .populate("book_publisher");
-      console.log(book[0]);
       res.send(book);
     } catch (e) {
       res.send(e.massage);
@@ -457,7 +456,6 @@ app.get("/all-authors", (req, res) => {
 
 app.get("/search", (req, res) => {
   const sq = req.query.sq;
-  console.log(sq);
   const run = async () => {
     try {
       const searchResult = await Book.find({
