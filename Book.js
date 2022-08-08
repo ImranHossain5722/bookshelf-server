@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+const bookCategorySchema = new mongoose.Schema({
+  category_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "Category",
+    required: true,
+  },
+});
+
 const bookSchema = new mongoose.Schema({
   book_title: {
     type: String,
@@ -51,13 +59,7 @@ const bookSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
-  book_category: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "Category",
-      required: true,
-    },
-  ],
+  book_category: [bookCategorySchema],
   book_reviews: [
     {
       type: mongoose.SchemaTypes.ObjectId,

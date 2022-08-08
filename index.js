@@ -389,7 +389,7 @@ app.get("/all-books", (req, res) => {
   const run = async () => {
     try {
       const books = await Book.find()
-        .populate("book_category.[]")
+        .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
 
@@ -430,7 +430,7 @@ app.get("/get-book", (req, res) => {
     try {
       const book = await Book.where("_id")
         .equals(id)
-        .populate("book_category")
+        .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
       res.send(book);
@@ -445,9 +445,9 @@ app.get("/get-book-by-category", (req, res) => {
   const ct = req.query.ct;
   const run = async () => {
     try {
-      const book = await Book.where("book_category")
+      const book = await Book.where("book_category.category_id")
         .equals(ct)
-        .populate("book_category.[]")
+        .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
       res.send(book);
@@ -464,7 +464,7 @@ app.get("/get-book-by-author", (req, res) => {
     try {
       const book = await Book.where("book_author")
         .equals(aut)
-        .populate("book_category.[]")
+        .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
       res.send(book);
@@ -481,7 +481,7 @@ app.get("/get-book-by-publisher", (req, res) => {
     try {
       const book = await Book.where("book_publisher")
         .equals(pub)
-        .populate("book_category.[]")
+        .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
       res.send(book);
