@@ -625,7 +625,22 @@ app.delete("/delete-cart", (req, res) => {
       const deleteItem = await UserProfile.update({
         $pull: { user_cart: { _id: cartId } },
       });
-      console.log("delete api hited", deleteItem);
+      res.send(deleteItem);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// remove form wishlist
+app.delete("/remove-from-wishlist", (req, res) => {
+  const wishlistId = req.query.wid;
+  const run = async () => {
+    try {
+      const deleteItem = await UserProfile.update({
+        $pull: { user_wishlist: { _id: wishlistId } },
+      });
       res.send(deleteItem);
     } catch (e) {
       res.send(e.massage);
