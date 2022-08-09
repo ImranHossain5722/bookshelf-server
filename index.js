@@ -260,7 +260,7 @@ app.post("/register-author", (req, res) => {
 
 app.post("/add-to-cart", (req, res) => {
   const { user_id, cart_data } = req.body;
-
+  console.log(req.body);
   const run = async () => {
     try {
       const userProfile = await UserProfile.where("_id").equals(user_id);
@@ -598,6 +598,35 @@ app.post("/add-review", (req, res) => {
     try {
       const addedReview = await Review.create(reviewData);
       res.send(addedReview);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/all-reviews", (req, res) => {
+  const run = async () => {
+    try {
+      const allReviews = await Review.find();
+      res.send(allReviews);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// delete cart
+app.delete("/delete-cart", (req, res) => {
+  const cartId = req.query.cid;
+  const run = async () => {
+    try {
+      const deleteItem = await UserProfile.update({
+        $pull: { user_cart: { _id: cartId } },
+      });
+      console.log("delete api hited", deleteItem);
+      res.send(deleteItem);
     } catch (e) {
       res.send(e.massage);
     }
