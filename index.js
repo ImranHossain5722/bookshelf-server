@@ -312,7 +312,15 @@ app.get("/get-wishlist-data", (req, res) => {
       const wishlistData = await UserProfile.where("_id")
         .equals(user_id)
         .select("user_wishlist")
-        .populate("user_wishlist.book");
+        .populate("user_wishlist.book")
+        .populate({
+          path: "user_wishlist.book",
+          populate: {
+            path: "book_author",
+            model: "Author",
+            select: "author_name",
+          },
+        });
 
       res.send(wishlistData);
     } catch (e) {
@@ -618,7 +626,7 @@ app.get("/all-reviews", (req, res) => {
 });
 
 // delete cart
-app.delete("/delete-cart", (req, res) => {
+app.delete("/remove-from-cart", (req, res) => {
   const cartId = req.query.cid;
   const run = async () => {
     try {
@@ -633,6 +641,23 @@ app.delete("/delete-cart", (req, res) => {
   run();
 });
 
+app.delete("/delete-cart", (req, res) => {
+  const userId = req.query.id;
+  const run = async () => {
+    try {
+      const deleteItem = await UserProfile.updateOne(
+        { _id: userId },
+        {
+          $unset: { user_cart: 1 },
+        }
+      );
+      res.send(deleteItem);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 // remove form wishlist
 app.delete("/remove-from-wishlist", (req, res) => {
   const wishlistId = req.query.wid;
