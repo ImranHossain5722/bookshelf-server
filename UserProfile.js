@@ -51,7 +51,7 @@ const userProfileSchema = new mongoose.Schema({
   },
   user_role: {
     type: String,
-    required: false,
+    required: true,
   },
   user_cart: [cartSchema],
   user_wishlist: [wishlistSchema],

@@ -392,6 +392,25 @@ app.put("/update-user", (req, res) => {
   };
   run();
 });
+app.patch("/update-user-role", (req, res) => {
+  const id = req.query.id;
+  const { user_role } = req.body;
+
+  const run = async () => {
+    try {
+      const updateUserRole = await UserProfile.findById(id);
+
+      updateUserRole.user_role = user_role;
+      await updateUserRole.save();
+
+      const updatedUserRole = await UserProfile.findById(id);
+      res.send(updatedUserRole);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
 
 app.get("/all-books", (req, res) => {
   const run = async () => {
