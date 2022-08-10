@@ -635,7 +635,10 @@ app.post("/add-review", (req, res) => {
 app.get("/all-reviews", (req, res) => {
   const run = async () => {
     try {
-      const allReviews = await Review.find();
+      const allReviews = await Review.find().populate({
+        path: "user_id",
+        select: ["user_name", "user_photo_url"],
+      });
       res.send(allReviews);
     } catch (e) {
       res.send(e.massage);
