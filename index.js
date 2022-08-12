@@ -640,6 +640,27 @@ app.get("/all-orders", (req, res) => {
   run();
 });
 
+app.delete("/remove-from-order", (req, res) => {
+  const orderId = req.query.oid;
+  const itemId = req.query.itemId;
+  const run = async () => {
+    try {
+      const deleteItem = await Order.updateOne(
+        {
+          _id: orderId,
+        },
+        {
+          $pull: { ordered_items: { _id: orderId } },
+        }
+      );
+      res.send(deleteItem);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 // review
 app.post("/add-review", (req, res) => {
   const { user_id, review } = req.body;
@@ -678,7 +699,7 @@ app.delete("/remove-from-cart", (req, res) => {
   const cartId = req.query.cid;
   const run = async () => {
     try {
-      const deleteItem = await UserProfile.update({
+      const deleteItem = await UserProfile.updateOne({
         $pull: { user_cart: { _id: cartId } },
       });
       res.send(deleteItem);
@@ -711,7 +732,7 @@ app.delete("/remove-from-wishlist", (req, res) => {
   const wishlistId = req.query.wid;
   const run = async () => {
     try {
-      const deleteItem = await UserProfile.update({
+      const deleteItem = await UserProfile.updateOne({
         $pull: { user_wishlist: { _id: wishlistId } },
       });
       res.send(deleteItem);
