@@ -640,6 +640,20 @@ app.get("/all-orders", (req, res) => {
   run();
 });
 
+app.patch("/update-price", (req, res) => {
+  const { order_id, order_price } = req.body;
+  const run = async () => {
+    try {
+      const selectedOrder = await Order.findById(order_id);
+      selectedOrder.ordered_price_amount = order_price;
+      await selectedOrder.save();
+      res.send(selectedOrder);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 app.delete("/remove-from-order", (req, res) => {
   const orderId = req.query.oid;
   const itemId = req.query.itemId;
