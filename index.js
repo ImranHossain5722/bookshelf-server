@@ -27,6 +27,7 @@ const UserProfile = require("./UserProfile");
 const Category = require("./Category");
 const Order = require("./Order");
 const Review = require("./Review");
+const BookRequest = require("./BookRequest");
 
 //-------------------------------//
 
@@ -347,6 +348,31 @@ app.get("/get-user", (req, res) => {
   const run = async () => {
     try {
       const userData = await UserProfile.where("uid").equals(uid);
+      res.send(userData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+app.get("/get-user-by-email", (req, res) => {
+  const email = req.query.email;
+  const run = async () => {
+    try {
+      const userData = await UserProfile.where("user_email").equals(email);
+      res.send(userData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
+app.get("/get-all-users-email", (req, res) => {
+  const run = async () => {
+    try {
+      const userData = await UserProfile.find().select("user_email");
       res.send(userData);
     } catch (e) {
       res.send(e.message);
@@ -689,6 +715,21 @@ app.delete("/remove-from-wishlist", (req, res) => {
         $pull: { user_wishlist: { _id: wishlistId } },
       });
       res.send(deleteItem);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// BookRequest
+
+app.post("/request-book", (req, res) => {
+  const run = async () => {
+    const bookData = req.body;
+    try {
+      const book = await BookRequest.create(bookData);
+      res.send(book);
     } catch (e) {
       res.send(e.massage);
     }
