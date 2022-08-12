@@ -650,7 +650,7 @@ app.delete("/remove-from-order", (req, res) => {
           _id: orderId,
         },
         {
-          $pull: { ordered_items: { _id: orderId } },
+          $pull: { ordered_items: { _id: itemId } },
         }
       );
       res.send(deleteItem);
