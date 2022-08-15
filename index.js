@@ -6,6 +6,7 @@ const { json } = require("express");
 require("dotenv").config();
 const port = process.env.PORT;
 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 //------ middleware ------------//
 app.use(cors());
 app.use(json());
@@ -767,6 +768,41 @@ app.post("/request-book", (req, res) => {
       res.send(book);
     } catch (e) {
       res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// stripe payment
+
+app.post("/create-payment-intent", async (req, res) => {
+  const decodedUid = req.decoded.uid;
+  const userId = req.body.uid;
+  const orderId = req.body.orderId;
+
+  const run = async () => {
+    try {
+      const orderData = await Order.findById(orderId);
+      const billAmount = orderData.order_bill * 100;
+      // Create a PaymentIntent with the order amount and currency
+      try {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: billAmount,
+          currency: "usd",
+          payment_method_types: ["card"],
+        });
+
+        await orderData.order_status = "paid";
+        orderData.save();
+
+        res.send({
+          clientSecret: paymentIntent.client_secret,
+        });
+      } catch (e) {
+        return res.send({ message: e.massage });
+      }
+    } catch (e) {
+      return res.send({ message: e.massage });
     }
   };
   run();
