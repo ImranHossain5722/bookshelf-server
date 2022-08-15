@@ -627,6 +627,22 @@ app.get("/get-order-data", (req, res) => {
   run();
 });
 
+app.get("/get-order-details", (req, res) => {
+  const order_id = req.query.oid;
+  const run = async () => {
+    try {
+      const placedOrderData = await Order.where("_id")
+        .equals(order_id)
+        .populate("user_id")
+        .populate("ordered_items.book_id");
+      res.send(placedOrderData);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 app.get("/all-orders", (req, res) => {
   const run = async () => {
     try {
@@ -776,8 +792,8 @@ app.post("/request-book", (req, res) => {
 // stripe payment
 
 app.post("/create-payment-intent", async (req, res) => {
-  const decodedUid = req.decoded.uid;
-  const userId = req.body.uid;
+  // const decodedUid = req.decoded.uid;
+  // const userId = req.body.uid;
   const orderId = req.body.orderId;
 
   const run = async () => {
@@ -792,8 +808,8 @@ app.post("/create-payment-intent", async (req, res) => {
           payment_method_types: ["card"],
         });
 
-        await orderData.order_status = "paid";
-        orderData.save();
+        orderData.order_status = "paid";
+        await orderData.save();
 
         res.send({
           clientSecret: paymentIntent.client_secret,
