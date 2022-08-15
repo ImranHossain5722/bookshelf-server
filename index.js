@@ -728,11 +728,15 @@ app.get("/all-reviews", (req, res) => {
 // delete cart
 app.delete("/remove-from-cart", (req, res) => {
   const cartId = req.query.cid;
+  const userId = req.query.id;
   const run = async () => {
     try {
-      const deleteItem = await UserProfile.updateOne({
-        $pull: { user_cart: { _id: cartId } },
-      });
+      const deleteItem = await UserProfile.updateOne(
+        { _id: userId },
+        {
+          $pull: { user_cart: { _id: cartId } },
+        }
+      );
       res.send(deleteItem);
     } catch (e) {
       res.send(e.massage);
