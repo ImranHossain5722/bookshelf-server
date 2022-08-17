@@ -1,16 +1,20 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-var cors = require("cors");
+const cors = require("cors");
 const { json } = require("express");
 require("dotenv").config();
 const port = process.env.PORT;
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+const swaggerJsDocs = YAML.load("./api.yaml");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 //------ middleware ------------//
+
 app.use(cors());
 app.use(json());
-
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
 //------------------------------//
 
 // ----------- Database ---------//
@@ -292,6 +296,29 @@ app.get("/get-cart-data", (req, res) => {
   run();
 });
 
+app.patch("/update-cart-quantity", (req, res) => {
+  const cid = req.query.cid;
+  const qnt = parseInt(req.query.qnt);
+
+  const run = async () => {
+    try {
+      const cartData = await UserProfile.updateOne(
+        { "user_cart._id": cid },
+        {
+          $set: {
+            "user_cart.$.qnt": qnt,
+          },
+        }
+      );
+
+      res.send(cartData);
+    } catch (e) {
+      res.send(e.message);
+    }
+  };
+  run();
+});
+
 app.post("/add-to-wishlist", (req, res) => {
   const { user_id, wishlist_data } = req.body;
   const run = async () => {
@@ -335,7 +362,12 @@ app.get("/get-wishlist-data", (req, res) => {
 app.get("/all-users", (req, res) => {
   const run = async () => {
     try {
-      const allUsers = await UserProfile.find();
+      const allUsers = await UserProfile.find().select([
+        "user_name",
+        "user_email",
+        "user_photo_url",
+        "user_role",
+      ]);
       res.send(allUsers);
     } catch (e) {
       res.send(e.message);
@@ -419,6 +451,7 @@ app.put("/update-user", (req, res) => {
   };
   run();
 });
+
 app.patch("/update-user-role", (req, res) => {
   const id = req.query.id;
   const { user_role } = req.body;
@@ -765,11 +798,15 @@ app.delete("/delete-cart", (req, res) => {
 // remove form wishlist
 app.delete("/remove-from-wishlist", (req, res) => {
   const wishlistId = req.query.wid;
+  const userId = req.query.id;
   const run = async () => {
     try {
-      const deleteItem = await UserProfile.updateOne({
-        $pull: { user_wishlist: { _id: wishlistId } },
-      });
+      const deleteItem = await UserProfile.updateOne(
+        { _id: userId },
+        {
+          $pull: { user_wishlist: { _id: wishlistId } },
+        }
+      );
       res.send(deleteItem);
     } catch (e) {
       res.send(e.massage);
@@ -827,6 +864,10 @@ app.post("/create-payment-intent", async (req, res) => {
   };
   run();
 });
+
+//======================================//
+// New Api //
+//======================================//
 
 app.listen(port, () => {
   console.log(`BookShelf listening on port ${port}`);
