@@ -7,6 +7,17 @@ const bookCategorySchema = new mongoose.Schema({
     required: true,
   },
 });
+const addReviewToBookSchema = new mongoose.Schema({
+  review_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "BookReview",
+  },
+  reviewedAt: {
+    type: Date,
+    immutable: true,
+    default: () => Date.now(),
+  },
+});
 
 const bookSchema = new mongoose.Schema({
   book_title: {
@@ -60,13 +71,7 @@ const bookSchema = new mongoose.Schema({
     min: 1,
   },
   book_category: [bookCategorySchema],
-  book_reviews: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "Review",
-      required: false,
-    },
-  ],
+  book_reviews: [addReviewToBookSchema],
   book_cover_photo_url: {
     type: String,
     required: true,

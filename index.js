@@ -35,6 +35,7 @@ const Order = require("./Order");
 const Review = require("./Review");
 const BookRequest = require("./BookRequest");
 const Messages = require("./Messages");
+const BookReview = require("./BookReview");
 
 //-------------------------------//
 
@@ -982,6 +983,33 @@ app.get("/delivered-orders", (req, res) => {
       );
 
       res.send(orderPickedBy);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.post("/add-book-review", (req, res) => {
+  const { user_id, book_id, ratings, review } = req.body;
+  const reviewData = {
+    user_id,
+    book_id,
+    review,
+    ratings,
+  };
+  const run = async () => {
+    try {
+      const addedBookReview = await BookReview.create(reviewData);
+      const reviewedBook = await Book.updateOne(
+        {
+          _id: addedBookReview.book_id,
+        },
+        {
+          $push: { book_reviews: { review_id: addedBookReview._id } },
+        }
+      );
+      res.send(addedBookReview);
     } catch (e) {
       res.send(e.massage);
     }
