@@ -42,7 +42,7 @@ const orderSchema = new mongoose.Schema({
   },
   placed_status: {
     type: Boolean,
-    default: false,
+    default: true,
     required: true,
   },
   placed_date: {
