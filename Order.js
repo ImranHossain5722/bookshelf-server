@@ -56,6 +56,10 @@ const orderSchema = new mongoose.Schema({
   picked_date: {
     type: String,
   },
+  picked_by: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "UserProfile",
+  },
   delivered_status: {
     type: Boolean,
     default: false,

@@ -880,7 +880,8 @@ app.post("/request-book", (req, res) => {
 app.post("/create-payment-intent", async (req, res) => {
   // const decodedUid = req.decoded.uid;
   // const userId = req.body.uid;
-  const orderId = req.body.order_id;
+  // const orderId = req.body.order_id;
+  const price = 
 
   const run = async () => {
     try {
@@ -921,6 +922,7 @@ app.patch("/update-order-tracking", (req, res) => {
     placed_date,
     picked_status,
     picked_date,
+    picked_by,
     delivered_status,
     delivered_date,
   } = req.body;
@@ -932,9 +934,10 @@ app.patch("/update-order-tracking", (req, res) => {
         selectedOrder.placed_date = placed_date;
         await selectedOrder.save();
       }
-      if (picked_status && picked_date) {
+      if (picked_status && picked_date && picked_by) {
         selectedOrder.picked_status = picked_status;
         selectedOrder.picked_date = picked_date;
+        selectedOrder.picked_by = picked_by;
         await selectedOrder.save();
       }
       if (delivered_status && delivered_date) {
