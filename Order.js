@@ -14,6 +14,27 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
+// const deliveryTrackingSchema = new mongoose.Schema({
+//   placed_status: {
+//     type: String,
+//   },
+//   placed_date: {
+//     type: String,
+//   },
+//   picked_status: {
+//     type: String,
+//   },
+//   picked_date: {
+//     type: String,
+//   },
+//   delivered_status: {
+//     type: String,
+//   },
+//   delivered_date: {
+//     type: String,
+//   },
+// });
+
 const paymentMethodSchema = new mongoose.Schema({
   payment_type: {
     type: String,
@@ -23,6 +44,7 @@ const paymentMethodSchema = new mongoose.Schema({
     type: String,
   },
 });
+
 const orderSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.SchemaTypes.ObjectId,
@@ -38,6 +60,30 @@ const orderSchema = new mongoose.Schema({
   order_status: {
     type: String,
     default: "pending",
+  },
+  placed_status: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  placed_date: {
+    type: String,
+  },
+  picked_status: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  picked_date: {
+    type: String,
+  },
+  delivered_status: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  delivered_date: {
+    type: String,
   },
   createdAt: {
     type: Date,

@@ -869,6 +869,43 @@ app.post("/create-payment-intent", async (req, res) => {
 // New Api //
 //======================================//
 
+app.patch("/update-order-tracking", (req, res) => {
+  const order_id = req.query.oid;
+  const {
+    placed_status,
+    placed_date,
+    picked_status,
+    picked_date,
+    delivered_status,
+    delivered_date,
+  } = req.body;
+  const run = async () => {
+    try {
+      const selectedOrder = await Order.findById(order_id);
+      if (placed_status && placed_date) {
+        selectedOrder.placed_status = placed_status;
+        selectedOrder.placed_date = placed_date;
+        await selectedOrder.save();
+      }
+      if (picked_status && picked_date) {
+        selectedOrder.picked_status = picked_status;
+        selectedOrder.picked_date = picked_date;
+        await selectedOrder.save();
+      }
+      if (delivered_status && delivered_date) {
+        selectedOrder.delivered_status = delivered_status;
+        selectedOrder.delivered_date = delivered_date;
+        await selectedOrder.save();
+      }
+
+      res.send(selectedOrder);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 app.listen(port, () => {
   console.log(`BookShelf listening on port ${port}`);
 });
