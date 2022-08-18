@@ -14,27 +14,6 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
-// const deliveryTrackingSchema = new mongoose.Schema({
-//   placed_status: {
-//     type: String,
-//   },
-//   placed_date: {
-//     type: String,
-//   },
-//   picked_status: {
-//     type: String,
-//   },
-//   picked_date: {
-//     type: String,
-//   },
-//   delivered_status: {
-//     type: String,
-//   },
-//   delivered_date: {
-//     type: String,
-//   },
-// });
-
 const paymentMethodSchema = new mongoose.Schema({
   payment_type: {
     type: String,

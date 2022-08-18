@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const socket = require("socket.io");
 const cors = require("cors");
 const { json } = require("express");
 require("dotenv").config();
@@ -33,6 +34,7 @@ const Category = require("./Category");
 const Order = require("./Order");
 const Review = require("./Review");
 const BookRequest = require("./BookRequest");
+const Messages = require("./Messages");
 
 //-------------------------------//
 
@@ -74,6 +76,48 @@ app.post("/add-book", (req, res) => {
   const run = async () => {
     try {
       const book = await Book.create(bookData);
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+app.patch("/update-book", (req, res) => {
+  const bookId = req.query.bid;
+  const {
+    book_title,
+    book_description,
+    book_edition,
+    book_country,
+    book_language,
+    book_author,
+    book_publisher,
+    book_pages,
+    discount,
+    book_price,
+    book_qnt,
+    book_category,
+    book_cover_photo_url,
+  } = req.body;
+
+  const run = async () => {
+    try {
+      const book = await Book.findById(bookId);
+      book.book_title = book_title;
+      book.book_description = book_description;
+      book.book_edition = book_edition;
+      book.book_language = book_language;
+      book.book_author = book_author;
+      book.book_publisher = book_publisher;
+      book.book_pages = book_pages;
+      book.discount = discount;
+      book.book_price = book_price;
+      book.book_qnt = book_qnt;
+      book.book_category = book_category;
+      book.book_cover_photo_url = book_cover_photo_url;
+
+      await book.save();
       res.send(book);
     } catch (e) {
       res.send(e.massage);
@@ -704,6 +748,7 @@ app.patch("/update-price", (req, res) => {
   };
   run();
 });
+
 app.delete("/remove-from-order", (req, res) => {
   const orderId = req.query.oid;
   const itemId = req.query.itemId;
@@ -906,6 +951,70 @@ app.patch("/update-order-tracking", (req, res) => {
   run();
 });
 
-app.listen(port, () => {
+//======================================//
+// Socket io //
+//======================================//
+
+app.post("/addmsg", async (req, res, next) => {
+  try {
+    const { from, to, message } = req.body;
+    const data = await Messages.create({
+      message: { text: message },
+      users: [from, to],
+      sender: from,
+    });
+
+    if (data) return res.json({ msg: "Message added successfully." });
+    else return res.json({ msg: "Failed to add message to the database" });
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+app.post("/getmsg", async (req, res, next) => {
+  try {
+    const { from, to } = req.body;
+
+    const messages = await Messages.find({
+      users: {
+        $all: [from, to],
+      },
+    }).sort({ updatedAt: 1 });
+
+    const projectedMessages = messages.map((msg) => {
+      return {
+        fromSelf: msg.sender.toString() === from,
+        message: msg.message.text,
+      };
+    });
+    res.json(projectedMessages);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+const server = app.listen(port, () => {
   console.log(`BookShelf listening on port ${port}`);
+});
+
+const io = socket(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
+
+global.onlineUsers = new Map();
+io.on("connection", (socket) => {
+  global.chatSocket = socket;
+  socket.on("add-user", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
+
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+    }
+  });
 });
