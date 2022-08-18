@@ -68,6 +68,10 @@ const orderSchema = new mongoose.Schema({
   delivered_date: {
     type: String,
   },
+  delivered_by: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "UserProfile",
+  },
   createdAt: {
     type: Date,
     immutable: true,

@@ -880,8 +880,7 @@ app.post("/request-book", (req, res) => {
 app.post("/create-payment-intent", async (req, res) => {
   // const decodedUid = req.decoded.uid;
   // const userId = req.body.uid;
-  // const orderId = req.body.order_id;
-  const price = 
+  const orderId = req.body.order_id;
 
   const run = async () => {
     try {
@@ -925,6 +924,7 @@ app.patch("/update-order-tracking", (req, res) => {
     picked_by,
     delivered_status,
     delivered_date,
+    delivered_by,
   } = req.body;
   const run = async () => {
     try {
@@ -940,13 +940,48 @@ app.patch("/update-order-tracking", (req, res) => {
         selectedOrder.picked_by = picked_by;
         await selectedOrder.save();
       }
-      if (delivered_status && delivered_date) {
+      if (delivered_status && delivered_date && delivered_by) {
         selectedOrder.delivered_status = delivered_status;
         selectedOrder.delivered_date = delivered_date;
+        selectedOrder.delivered_by = delivered_by;
         await selectedOrder.save();
       }
 
       res.send(selectedOrder);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/picked-orders", (req, res) => {
+  const delivery_man_id = req.query.uid;
+
+  const run = async () => {
+    try {
+      const orderPickedBy = await Order.where("picked_by").equals(
+        delivery_man_id
+      );
+
+      res.send(orderPickedBy);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/delivered-orders", (req, res) => {
+  const delivery_man_id = req.query.uid;
+
+  const run = async () => {
+    try {
+      const orderPickedBy = await Order.where("delivered_by").equals(
+        delivery_man_id
+      );
+
+      res.send(orderPickedBy);
     } catch (e) {
       res.send(e.massage);
     }
