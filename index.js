@@ -880,12 +880,12 @@ app.post("/request-book", (req, res) => {
 app.post("/create-payment-intent", async (req, res) => {
   // const decodedUid = req.decoded.uid;
   // const userId = req.body.uid;
-  const orderId = req.body.orderId;
+  const orderId = req.body.order_id;
 
   const run = async () => {
     try {
       const orderData = await Order.findById(orderId);
-      const billAmount = orderData.order_bill * 100;
+      const billAmount = orderData.ordered_price_amount * 100;
       // Create a PaymentIntent with the order amount and currency
       try {
         const paymentIntent = await stripe.paymentIntents.create({
