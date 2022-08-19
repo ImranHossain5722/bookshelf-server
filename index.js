@@ -881,12 +881,13 @@ app.post("/request-book", (req, res) => {
 app.post("/create-payment-intent", async (req, res) => {
   // const decodedUid = req.decoded.uid;
   // const userId = req.body.uid;
-  const orderId = req.body.order_id;
+  // const orderId = req.body.order_id;
+  const paymentInfo = req.body.bill;
 
   const run = async () => {
     try {
-      const orderData = await Order.findById(orderId);
-      const billAmount = orderData.ordered_price_amount * 100;
+      // const orderData = await Order.findById(orderId);
+      const billAmount = paymentInfo * 100;
       // Create a PaymentIntent with the order amount and currency
       try {
         const paymentIntent = await stripe.paymentIntents.create({
@@ -911,6 +912,32 @@ app.post("/create-payment-intent", async (req, res) => {
   run();
 });
 
+// app.patch("/payment", async (req, res) => {
+//   // const decodedUid = req.decoded.uid;
+//   // const userId = req.body.uid;
+//   const orderId = req.body.orderId;
+//   const tnxId = req.body.tnxId;
+
+//   if (decodedUid === userId) {
+//     const run = async () => {
+//       try {
+//         const orderData = await Order.findById(orderId);
+
+//         orderData.tnx_id = tnxId;
+//         await orderData.save();
+//         orderData.order_status = "paid";
+//         await orderData.save();
+//         // orderData.tnx_id
+//         res.status(200).send(orderData);
+//       } catch (e) {
+//         e;
+//       }
+//     };
+//     run();
+//   } else {
+//     return res.status(403).send({ message: "Forbidden access" });
+//   }
+// });
 //======================================//
 // New Api //
 //======================================//
@@ -1065,8 +1092,8 @@ const server = app.listen(port, () => {
 
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: ["http://localhost:3000", "https://bookshelf-9bb86.web.app"],
+    // credentials: true,
   },
 });
 
