@@ -36,6 +36,7 @@ const Review = require("./Review");
 const BookRequest = require("./BookRequest");
 const Messages = require("./Messages");
 const BookReview = require("./BookReview");
+const Post = require("./Post");
 
 //-------------------------------//
 
@@ -1057,6 +1058,37 @@ app.delete("/delete-book", (req, res) => {
   run();
 });
 
+app.post("/add-post", (req, res) => {
+  const { user_id, post_content, post_image } = req.body;
+  const postData = {
+    user_id,
+    post_content,
+    post_image,
+  };
+  const run = async () => {
+    try {
+      const addedPost = await Post.create(postData);
+
+      res.send(addedPost);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.get("/get-posts", (req, res) => {
+  const run = async () => {
+    try {
+      const posts = await Post.find();
+
+      res.send(posts);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
 //======================================//
 // Socket io //
 //======================================//
