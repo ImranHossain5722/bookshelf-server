@@ -1044,6 +1044,19 @@ app.post("/add-book-review", (req, res) => {
   run();
 });
 
+app.delete("/delete-book", (req, res) => {
+  const bookId = req.query.id;
+  const run = async () => {
+    try {
+      const book = await Book.find({ _id: bookId }).remove().exec();
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 //======================================//
 // Socket io //
 //======================================//
