@@ -25,6 +25,22 @@ mongoose.connect(uri, () => {
   console.log("DB connected");
 });
 
+//----------------mongoose validator ------------//
+// //To run it for just one query:
+// mongoose.Schema.updateOne({}, {}, { runValidators: true });
+
+// //To run globally:
+// mongoose.plugin((schema) => {
+//   schema.pre("findOneAndUpdate", setRunValidators);
+//   schema.pre("updateMany", setRunValidators);
+//   schema.pre("updateOne", setRunValidators);
+//   schema.pre("update", setRunValidators);
+// });
+
+// function setRunValidators() {
+//   this.setOptions({ runValidators: true });
+// }
+
 // -------- mongoose schemas ------//
 const Book = require("./Book");
 const Author = require("./Author");
@@ -1083,6 +1099,79 @@ app.get("/get-posts", (req, res) => {
       const posts = await Post.find();
 
       res.send(posts);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.patch("/add-comment", (req, res) => {
+  const { user_id, post_id, comment } = req.body;
+  const commentData = {
+    post_id,
+    user_id,
+    comment,
+  };
+  const run = async () => {
+    try {
+      const addedComment = await Post.updateOne(
+        {
+          _id: post_id,
+        },
+        {
+          $push: { post_comments: { user_id: user_id, comment: comment } },
+        }
+      );
+      res.send(addedComment);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.patch("/upvote-post", (req, res) => {
+  const { user_id, post_id } = req.body;
+  const commentData = {
+    post_id,
+    user_id,
+  };
+  const run = async () => {
+    try {
+      const upvotePost = await Post.updateOne(
+        { _id: post_id },
+        {
+          $addToSet: {
+            up_votes: user_id,
+          },
+        }
+      );
+      res.send(upvotePost);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+app.patch("/downvote-post", (req, res) => {
+  const { user_id, post_id } = req.body;
+  const commentData = {
+    post_id,
+    user_id,
+  };
+  const run = async () => {
+    try {
+      const downvotePost = await Post.updateOne(
+        { _id: post_id },
+        {
+          $addToSet: {
+            down_votes: user_id,
+          },
+        }
+      );
+      res.send(downvotePost);
     } catch (e) {
       res.send(e.massage);
     }
