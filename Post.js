@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
 
 const commentSchema = new mongoose.Schema({
   user_id: {
@@ -8,8 +7,6 @@ const commentSchema = new mongoose.Schema({
   },
   comment: {
     type: String,
-    maxLength: 50,
-    min: 1,
   },
 });
 
@@ -21,8 +18,6 @@ const postSchema = new mongoose.Schema({
   },
   post_content: {
     type: String,
-    maxLength: 50,
-    min: 1,
   },
   post_image: {
     type: String,
@@ -35,14 +30,12 @@ const postSchema = new mongoose.Schema({
     {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "UserProfile",
-      unique: true,
     },
   ],
   down_votes: [
     {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "UserProfile",
-      unique: true,
     },
   ],
   post_comments: [commentSchema],
@@ -52,7 +45,5 @@ const postSchema = new mongoose.Schema({
     default: () => Date.now(),
   },
 });
-
-postSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("Post", postSchema);

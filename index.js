@@ -1081,10 +1081,10 @@ app.post("/add-post", (req, res) => {
     post_content,
     post_image,
   };
+  // console.log(postData);
   const run = async () => {
     try {
       const addedPost = await Post.create(postData);
-
       res.send(addedPost);
     } catch (e) {
       res.send(e.massage);
