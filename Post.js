@@ -26,7 +26,6 @@ const postSchema = new mongoose.Schema({
   },
   post_image: {
     type: String,
-    required: true,
     validate: {
       validator: (v) => v.startsWith("http"),
       message: (props) => `${props.value} is valid a url`,
