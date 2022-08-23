@@ -53,6 +53,7 @@ const BookRequest = require("./BookRequest");
 const Messages = require("./Messages");
 const BookReview = require("./BookReview");
 const Post = require("./Post");
+const Sells = require("./Sells");
 
 //-------------------------------//
 
@@ -280,6 +281,7 @@ app.post("/register-publisher", (req, res) => {
         photo_url,
       };
       await Publisher.create(publisherData);
+      await Sells.create({ user_id: userProfile._id });
       res.send(userProfile);
     } catch (e) {
       res.send(e.message);
@@ -316,6 +318,7 @@ app.post("/register-author", (req, res) => {
         photo_url,
       };
       await Author.create(authorData);
+      await Sells.create({ user_id: userProfile._id });
       res.send(userProfile);
     } catch (e) {
       res.send(e.message);
@@ -893,68 +896,72 @@ app.post("/request-book", (req, res) => {
   run();
 });
 
+//=========================================//
 // stripe payment
 
-app.post("/create-payment-intent", async (req, res) => {
-  // const decodedUid = req.decoded.uid;
-  // const userId = req.body.uid;
-  // const orderId = req.body.order_id;
-  const paymentInfo = req.body.bill;
-
-  const run = async () => {
-    try {
-      // const orderData = await Order.findById(orderId);
-      const billAmount = paymentInfo * 100;
-      // Create a PaymentIntent with the order amount and currency
-      try {
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: billAmount,
-          currency: "usd",
-          payment_method_types: ["card"],
-        });
-
-        orderData.order_status = "paid";
-        await orderData.save();
-
-        res.send({
-          clientSecret: paymentIntent.client_secret,
-        });
-      } catch (e) {
-        return res.send({ message: e.massage });
-      }
-    } catch (e) {
-      return res.send({ message: e.massage });
-    }
-  };
-  run();
-});
-
-// app.patch("/payment", async (req, res) => {
+// app.post("/create-payment-intent", async (req, res) => {
 //   // const decodedUid = req.decoded.uid;
 //   // const userId = req.body.uid;
-//   const orderId = req.body.orderId;
-//   const tnxId = req.body.tnxId;
+//   const orderId = req.query.oid;
+//   const paymentInfo = req.body.bill;
 
-//   if (decodedUid === userId) {
-//     const run = async () => {
+//   const run = async () => {
+//     try {
+//       const orderData = await Order.findById(orderId);
+//       const billAmount = orderData.ordered_price_amount * 100;
+//       // Create a PaymentIntent with the order amount and currency
 //       try {
-//         const orderData = await Order.findById(orderId);
+//         const paymentIntent = await stripe.paymentIntents.create({
+//           amount: billAmount,
+//           currency: "usd",
+//           payment_method_types: ["card"],
+//         });
 
-//         orderData.tnx_id = tnxId;
-//         await orderData.save();
 //         orderData.order_status = "paid";
 //         await orderData.save();
-//         // orderData.tnx_id
-//         res.status(200).send(orderData);
+
+//         res.send({
+//           clientSecret: paymentIntent.client_secret,
+//         });
 //       } catch (e) {
-//         e;
+//         return res.send({ message: e.massage });
 //       }
-//     };
-//     run();
-//   } else {
-//     return res.status(403).send({ message: "Forbidden access" });
-//   }
+//     } catch (e) {
+//       return res.send({ message: e.massage });
+//     }
+//   };
+//   run();
 // });
+
+// // app.patch("/payment", async (req, res) => {
+// //   // const decodedUid = req.decoded.uid;
+// //   // const userId = req.body.uid;
+// //   const orderId = req.body.orderId;
+// //   const tnxId = req.body.tnxId;
+
+// //   if (decodedUid === userId) {
+// //     const run = async () => {
+// //       try {
+// //         const orderData = await Order.findById(orderId);
+
+// //         orderData.tnx_id = tnxId;
+// //         await orderData.save();
+// //         orderData.order_status = "paid";
+// //         await orderData.save();
+// //         // orderData.tnx_id
+// //         res.status(200).send(orderData);
+// //       } catch (e) {
+// //         e;
+// //       }
+// //     };
+// //     run();
+// //   } else {
+// //     return res.status(403).send({ message: "Forbidden access" });
+// //   }
+// // });
+
+//=======================================//
+
 //======================================//
 // New Api //
 //======================================//
@@ -1096,8 +1103,11 @@ app.post("/add-post", (req, res) => {
 app.get("/get-posts", (req, res) => {
   const run = async () => {
     try {
-      const posts = await Post.find();
-
+      const posts = await Post.find()
+        .populate("user_id")
+        .populate("post_comments.user_id")
+        .populate("up_votes")
+        .populate("down_votes");
       res.send(posts);
     } catch (e) {
       res.send(e.massage);
@@ -1178,6 +1188,48 @@ app.patch("/downvote-post", (req, res) => {
   };
   run();
 });
+
+//======================================//
+// sells Api //
+//======================================//
+
+app.get("/get-sells-data", (req, res) => {
+  const user_id = req.query.id;
+
+  const run = async () => {
+    try {
+      const sellsData = await Sells.find({ user_id: user_id }).populate(
+        "books_list"
+      );
+      res.send(sellsData);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
+// app.post("/add-sells-data", (req, res) => {
+//   // const {
+//   //   user_id,
+//   //   total_sells_amount,
+//   //   total_sells_qnt,
+//   //   total_withdrawal_amount,
+//   //   balance_amount,
+//   //   books_list,
+//   // } = req.body;
+
+//   const run = async () => {
+//     try {
+//       const sellsData = await Sells.create(req.body);
+//       res.send(sellsData);
+//     } catch (e) {
+//       res.send(e.massage);
+//     }
+//   };
+//   run();
+// });
+
 //======================================//
 // Socket io //
 //======================================//
