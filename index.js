@@ -1107,7 +1107,12 @@ app.get("/get-posts", (req, res) => {
   const run = async () => {
     try {
       const posts = await Post.find()
-        .select({ createdAt: 1, post_content: 1, post_image: 1 })
+        .select({
+          createdAt: 1,
+          post_content: 1,
+          post_image: 1,
+          post_comments: 1,
+        })
         .sort({ createdAt: -1 })
         .populate("user_id")
         .populate("post_comments.user_id")
