@@ -578,13 +578,16 @@ app.get("/books", (req, res) => {
 
 app.get("/get-book", (req, res) => {
   const id = req.query.id;
+
   const run = async () => {
     try {
+      viewCount(id);
       const book = await Book.where("_id")
         .equals(id)
         .populate("book_category.category_id")
         .populate("book_author")
         .populate("book_publisher");
+
       res.send(book);
     } catch (e) {
       res.send(e.massage);
@@ -1104,6 +1107,8 @@ app.get("/get-posts", (req, res) => {
   const run = async () => {
     try {
       const posts = await Post.find()
+        .select({ createdAt: 1, post_content: 1, post_image: 1 })
+        .sort({ createdAt: -1 })
         .populate("user_id")
         .populate("post_comments.user_id")
         .populate("up_votes")
@@ -1189,6 +1194,28 @@ app.patch("/downvote-post", (req, res) => {
   run();
 });
 
+app.get("/get-popular-books", (req, res) => {
+  const id = req.query.id;
+
+  const run = async () => {
+    try {
+      viewCount(id);
+      const book = await Book.find({})
+        .select("view_count")
+        .sort({ view_count: -1 })
+        .limit(8)
+        .populate("book_category.category_id")
+        .populate("book_author")
+        .populate("book_publisher");
+
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 //======================================//
 // sells Api //
 //======================================//
@@ -1229,6 +1256,24 @@ app.get("/get-sells-data", (req, res) => {
 //   };
 //   run();
 // });
+//======================//
+const viewCount = (id) => {
+  const run = async () => {
+    try {
+      const book = await Book.updateOne(
+        { _id: id },
+        {
+          $inc: {
+            view_count: 1,
+          },
+        }
+      );
+    } catch (e) {
+      console.log(e.massage);
+    }
+  };
+  run();
+};
 
 //======================================//
 // Socket io //

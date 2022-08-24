@@ -70,6 +70,20 @@ const bookSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
+  sells_qnt: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  seller_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "UserProfile",
+  },
+  view_count: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   book_category: [bookCategorySchema],
   book_reviews: [addReviewToBookSchema],
   book_cover_photo_url: {
