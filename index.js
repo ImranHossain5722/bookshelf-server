@@ -62,39 +62,39 @@ app.get("/", (req, res) => {
 });
 
 app.post("/add-book", (req, res) => {
-  const {
-    book_title,
-    book_description,
-    book_edition,
-    book_country,
-    book_language,
-    book_author,
-    book_publisher,
-    book_pages,
-    discount,
-    book_price,
-    book_qnt,
-    book_category,
-    book_cover_photo_url,
-  } = req.body;
-  const bookData = {
-    book_title,
-    book_description,
-    book_edition,
-    book_country,
-    book_language,
-    book_author,
-    book_publisher,
-    book_pages,
-    discount,
-    book_price,
-    book_qnt,
-    book_category,
-    book_cover_photo_url,
-  };
+  // const {
+  //   book_title,
+  //   book_description,
+  //   book_edition,
+  //   book_country,
+  //   book_language,
+  //   book_author,
+  //   book_publisher,
+  //   book_pages,
+  //   discount,
+  //   book_price,
+  //   book_qnt,
+  //   book_category,
+  //   book_cover_photo_url,
+  // } = req.body;
+  // const bookData = {
+  //   book_title,
+  //   book_description,
+  //   book_edition,
+  //   book_country,
+  //   book_language,
+  //   book_author,
+  //   book_publisher,
+  //   book_pages,
+  //   discount,
+  //   book_price,
+  //   book_qnt,
+  //   book_category,
+  //   book_cover_photo_url,
+  // };
   const run = async () => {
     try {
-      const book = await Book.create(bookData);
+      const book = await Book.create(req.body);
       res.send(book);
     } catch (e) {
       res.send(e.massage);
