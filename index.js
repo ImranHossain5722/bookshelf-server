@@ -78,23 +78,31 @@ app.post("/add-book", (req, res) => {
   //   book_cover_photo_url,
   // } = req.body;
   // const bookData = {
-  //   book_title,
-  //   book_description,
-  //   book_edition,
-  //   book_country,
-  //   book_language,
-  //   book_author,
-  //   book_publisher,
-  //   book_pages,
-  //   discount,
-  //   book_price,
-  //   book_qnt,
-  //   book_category,
-  //   book_cover_photo_url,
+  // book_title,
+  // book_description,
+  // book_edition,
+  // book_country,
+  // book_language,
+  // book_author,
+  // book_publisher,
+  // book_pages,
+  // discount,
+  // book_price,
+  // book_qnt,
+  // book_category,
+  // book_cover_photo_url,
   // };
   const run = async () => {
     try {
       const book = await Book.create(req.body);
+      await Sells.updateOne(
+        {
+          user_id: book.seller_id,
+        },
+        {
+          $push: { books_list: book._id },
+        }
+      );
       res.send(book);
     } catch (e) {
       res.send(e.massage);
