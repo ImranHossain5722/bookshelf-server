@@ -1239,7 +1239,7 @@ app.get("/get-popular-books", (req, res) => {
 
 app.get("/make-payment", (req, res) => {
   const orderId = req.query.oid;
-  const orderAmount = req.query.oAmount;
+  const orderAmount = req.query.price;
 
   const data = {
     total_amount: orderAmount,
