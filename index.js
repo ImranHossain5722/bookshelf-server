@@ -1292,6 +1292,20 @@ app.get("/make-payment", (req, res) => {
 //   });
 // });
 
+app.get("/change-order-status", (req, res) => {
+  const run = async () => {
+    try {
+      const placedOrder = await Order.findById(req.query.oid);
+      placedOrder.order_status = req.query.status;
+      placedOrder.save();
+      res.send(placedOrder);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 //======================================//
 // sells Api //
 //======================================//
