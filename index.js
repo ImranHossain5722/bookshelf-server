@@ -10,11 +10,11 @@ const swaggerUI = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerJsDocs = YAML.load("./api.yaml");
 
-// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const SSLCommerzPayment = require("sslcommerz-lts");
-const store_id = `${process.env.STORE_ID}`;
-const store_passwd = `${process.env.STORE_PASS}`;
-const is_live = false;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const SSLCommerzPayment = require("sslcommerz-lts");
+// const store_id = `${process.env.STORE_ID}`;
+// const store_passwd = `${process.env.STORE_PASS}`;
+// const is_live = false;
 //------ middleware ------------//
 
 app.use(cors());
@@ -1189,17 +1189,14 @@ app.patch("/upvote-post", (req, res) => {
 
 app.patch("/downvote-post", (req, res) => {
   const { user_id, post_id } = req.body;
-  const commentData = {
-    post_id,
-    user_id,
-  };
+
   const run = async () => {
     try {
       const downvotePost = await Post.updateOne(
         { _id: post_id },
         {
-          $addToSet: {
-            down_votes: user_id,
+          $pull: {
+            up_votes: user_id,
           },
         }
       );
@@ -1239,46 +1236,91 @@ app.get("/get-popular-books", (req, res) => {
 
 app.get("/make-payment", (req, res) => {
   const orderId = req.query.oid;
-  const orderAmount = req.query.price;
-
-  const data = {
-    total_amount: orderAmount,
-    currency: "BDT",
-    tran_id: `tnx_${orderId}`, // use unique tran_id for each api call
-    success_url: `${process.env.CLIENT_URL}/dashboard`,
-    fail_url: "http://localhost:3030/fail",
-    cancel_url: "http://localhost:3030/cancel",
-    ipn_url: "http://localhost:3030/ipn",
-    shipping_method: "Courier",
-    product_name: "Computer.",
-    product_category: "Electronic",
-    product_profile: "general",
-    cus_name: "Customer Name",
-    cus_email: "customer@example.com",
-    cus_add1: "Dhaka",
-    cus_add2: "Dhaka",
-    cus_city: "Dhaka",
-    cus_state: "Dhaka",
-    cus_postcode: "1000",
-    cus_country: "Bangladesh",
-    cus_phone: "01711111111",
-    cus_fax: "01711111111",
-    ship_name: "Customer Name",
-    ship_add1: "Dhaka",
-    ship_add2: "Dhaka",
-    ship_city: "Dhaka",
-    ship_state: "Dhaka",
-    ship_postcode: 1000,
-    ship_country: "Bangladesh",
+  const run = async () => {
+    try {
+      const placedOrderData = await Order.findById(orderId)
+        .select({})
+        .populate("user_id")
+        .populate("ordered_items.book_id");
+      try {
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          line_items: placedOrderData.ordered_items.map((item) => {
+            return {
+              price_data: {
+                currency: "usd",
+                product_data: {
+                  name: item.book_id.book_title,
+                },
+                unit_amount: item.book_id.book_price * 100,
+              },
+              quantity: item.qnt,
+            };
+          }),
+          success_url: `${process.env.CLIENT_URL}/dashboard`,
+          cancel_url: `${process.env.CLIENT_URL}/dashboard`,
+        });
+        // const sessionInfo = await stripe.checkout.sessions.retrieve(
+        //   session.id,
+        //   {
+        //     expand: ["line_items"],
+        //   }
+        // );
+        res.json({ url: session.url });
+      } catch (e) {
+        res.status(500).json({ error: e.message });
+      }
+      // res.send(placedOrderData);
+    } catch (e) {
+      res.send(e.massage);
+    }
   };
-  const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-  sslcz.init(data).then((apiResponse) => {
-    // Redirect the user to payment gateway
-    let GatewayPageURL = apiResponse.GatewayPageURL;
-    res.redirect(GatewayPageURL);
-    // console.log("Redirecting to: ", GatewayPageURL);
-  });
+  run();
 });
+
+// app.get("/make-payment", (req, res) => {
+//   const orderId = req.query.oid;
+//   const orderAmount = req.query.price;
+
+//   const data = {
+//     total_amount: orderAmount,
+//     currency: "BDT",
+//     tran_id: `tnx_${orderId}`, // use unique tran_id for each api call
+//     success_url: `${process.env.CLIENT_URL}/dashboard`,
+//     fail_url: "http://localhost:3030/fail",
+//     cancel_url: "http://localhost:3030/cancel",
+//     ipn_url: "http://localhost:3030/ipn",
+//     shipping_method: "Courier",
+//     product_name: "Computer.",
+//     product_category: "Electronic",
+//     product_profile: "general",
+//     cus_name: "Customer Name",
+//     cus_email: "customer@example.com",
+//     cus_add1: "Dhaka",
+//     cus_add2: "Dhaka",
+//     cus_city: "Dhaka",
+//     cus_state: "Dhaka",
+//     cus_postcode: "1000",
+//     cus_country: "Bangladesh",
+//     cus_phone: "01711111111",
+//     cus_fax: "01711111111",
+//     ship_name: "Customer Name",
+//     ship_add1: "Dhaka",
+//     ship_add2: "Dhaka",
+//     ship_city: "Dhaka",
+//     ship_state: "Dhaka",
+//     ship_postcode: 1000,
+//     ship_country: "Bangladesh",
+//   };
+//   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+//   sslcz.init(data).then((apiResponse) => {
+//     // Redirect the user to payment gateway
+//     let GatewayPageURL = apiResponse.GatewayPageURL;
+//     res.redirect(GatewayPageURL);
+//     // console.log("Redirecting to: ", GatewayPageURL);
+//   });
+// });
 
 // app.get("/transaction-query-by-transaction-id", (req, res) => {
 //   const data = {
@@ -1364,6 +1406,24 @@ const viewCount = (id) => {
   };
   run();
 };
+
+// const updateSells = (id) => {
+//   const run = async () => {
+//     try {
+//       const book = await Book.updateOne(
+//         { _id: id },
+//         {
+//           $inc: {
+//             view_count: 1,
+//           },
+//         }
+//       );
+//     } catch (e) {
+//       console.log(e.massage);
+//     }
+//   };
+//   run();
+// };
 
 //======================================//
 // Socket io //
