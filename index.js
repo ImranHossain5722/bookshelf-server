@@ -1230,6 +1230,28 @@ app.get("/get-popular-books", (req, res) => {
   run();
 });
 
+app.get("/get-best-discount-books", (req, res) => {
+  const id = req.query.id;
+
+  const run = async () => {
+    try {
+      viewCount(id);
+      const book = await Book.find({})
+        .select("discount")
+        .sort({ discount: -1 })
+        .limit(8)
+        .populate("book_category.category_id")
+        .populate("book_author")
+        .populate("book_publisher");
+
+      res.send(book);
+    } catch (e) {
+      res.send(e.massage);
+    }
+  };
+  run();
+});
+
 //======================================//
 // payment Api //
 //======================================//
