@@ -1228,7 +1228,12 @@ app.get("/get-popular-books", (req, res) => {
     try {
       viewCount(id);
       const book = await Book.find({})
-        .select({ book_title: 1, view_count: 1, book_cover_photo_url: 1 })
+        .select({
+          book_title: 1,
+          view_count: 1,
+          book_cover_photo_url: 1,
+          book_price: 1,
+        })
         .sort({ view_count: -1 })
         .limit(8)
         .populate("book_category.category_id")
@@ -1250,7 +1255,12 @@ app.get("/get-best-discount-books", (req, res) => {
     try {
       viewCount(id);
       const book = await Book.find({})
-        .select({ discount: 1, book_title: 1, book_cover_photo_url: 1 })
+        .select({
+          discount: 1,
+          book_title: 1,
+          book_cover_photo_url: 1,
+          book_price: 1,
+        })
         .sort({ discount: -1 })
         .limit(8)
         .populate("book_category.category_id")
