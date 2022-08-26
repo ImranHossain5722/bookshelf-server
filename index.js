@@ -1293,8 +1293,8 @@ app.get("/make-payment", (req, res) => {
               quantity: item.qnt,
             };
           }),
-          success_url: `${process.env.CLIENT_URL}/dashboard`,
-          cancel_url: `${process.env.CLIENT_URL}/dashboard`,
+          success_url: `${process.env.CLIENT_URL}dashboard`,
+          cancel_url: `${process.env.CLIENT_URL}dashboard`,
         });
         // const sessionInfo = await stripe.checkout.sessions.retrieve(
         //   session.id,
