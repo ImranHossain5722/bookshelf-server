@@ -75,6 +75,11 @@ const bookSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  sells_amount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   seller_id: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "UserProfile",
