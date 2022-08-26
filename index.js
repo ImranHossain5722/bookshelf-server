@@ -731,7 +731,20 @@ app.get("/get-order-data", (req, res) => {
       const placedOrderData = await Order.where("user_id")
         .equals(user_id)
         .populate("user_id")
-        .populate("ordered_items.book_id");
+        .populate("ordered_items.book_id")
+        .populate({
+          path: "ordered_items.book_id",
+          populate: {
+            path: "book_author",
+            model: "Author",
+            select: "author_name",
+          },
+          populate: {
+            path: "book_publisher",
+            model: "Publisher",
+            select: "publisher_name",
+          },
+        });
       res.send(placedOrderData);
     } catch (e) {
       res.send(e.massage);
