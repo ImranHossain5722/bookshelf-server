@@ -91,6 +91,11 @@ const bookSchema = new mongoose.Schema({
   },
   book_category: [bookCategorySchema],
   book_reviews: [addReviewToBookSchema],
+  average_rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   book_cover_photo_url: {
     type: String,
     required: true,

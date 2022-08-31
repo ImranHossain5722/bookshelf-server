@@ -598,7 +598,15 @@ app.get("/get-book", (req, res) => {
         .equals(id)
         .populate("book_category.category_id")
         .populate("book_author")
-        .populate("book_publisher");
+        .populate("book_publisher")
+        .populate("book_reviews.review_id")
+        .populate({
+          path: "book_reviews.review_id",
+          populate: {
+            path: "user_id",
+            model: "UserProfile",
+          },
+        });
 
       res.send(book);
     } catch (e) {
@@ -716,6 +724,8 @@ app.post("/place-order", (req, res) => {
   const run = async () => {
     try {
       const placedOrder = await Order.create(req.body);
+      // console.log(placedOrder._id);
+      // await handleSells(placedOrder._id);
       res.send(placedOrder);
     } catch (e) {
       res.send(e.massage);
@@ -1088,6 +1098,7 @@ app.post("/add-book-review", (req, res) => {
           $push: { book_reviews: { review_id: addedBookReview._id } },
         }
       );
+      await updateAvgRatings(book_id);
       res.send(addedBookReview);
     } catch (e) {
       res.send(e.massage);
@@ -1452,18 +1463,32 @@ const viewCount = (id) => {
   run();
 };
 
-// const updateSells = (orderItems) => {
+const updateAvgRatings = (bookId) => {
+  const run = async () => {
+    const bookReviews = await BookReview.find({ book_id: bookId });
+    const arr = [...bookReviews];
+    const ratingsArr = await arr.map((o) => o.ratings);
+    const sum = await ratingsArr.reduce((a, b) => a + b, 0);
+    const avg = sum / arr.length;
+    const book = await Book.updateOne(
+      { _id: bookId },
+      {
+        $set: {
+          average_rating: avg,
+        },
+      }
+    );
+  };
+  run();
+};
 
+// const handleSells = (orderId) => {
 //   const run = async () => {
 //     try {
-//       const book = await Book.updateOne(
-//         { _id: id },
-//         {
-//           $inc: {
-//             view_count: 1,
-//           },
-//         }
-//       );
+//       const getOrder = await Order.find({ _id: orderId }).populate("book_id");
+//       const itemsArr = [...orderItems];
+
+//       console.log(getOrder);
 //     } catch (e) {
 //       console.log(e.massage);
 //     }
@@ -1538,3 +1563,5 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+// test code
