@@ -50,6 +50,11 @@ const bookSchema = new mongoose.Schema({
     ref: "Publisher",
     required: true,
   },
+  book_original_price: {
+    type: Number,
+    required: false,
+    min: 1,
+  },
   book_price: {
     type: Number,
     required: false,

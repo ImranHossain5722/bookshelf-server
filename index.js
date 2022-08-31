@@ -127,6 +127,7 @@ app.patch("/update-book", (req, res) => {
     book_pages,
     discount,
     book_price,
+    book_original_price,
     book_qnt,
     book_category,
     book_cover_photo_url,
@@ -144,6 +145,7 @@ app.patch("/update-book", (req, res) => {
       book.book_pages = book_pages;
       book.discount = discount;
       book.book_price = book_price;
+      book.book_original_price = book_original_price;
       book.book_qnt = book_qnt;
       book.book_category = book_category;
       book.book_cover_photo_url = book_cover_photo_url;
