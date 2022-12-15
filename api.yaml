@@ -8,7 +8,7 @@ info:
   servers:
     -url: "http://localhost:4000/"
     description: Local server URL
-    -url: "https://book-shelf-webapp.herokuapp.com/"
+    -url: "https://bookshelfonlinesellbook.onrender.com/"
     description: Live server URL
 
 schemes: [http,https]
